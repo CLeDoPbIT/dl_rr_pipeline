@@ -1,13 +1,14 @@
 [
   {
-    "name": "",
-    "module": "",
+    "name": "Create Numpy Data Processor",
+    "module": "preprocessing.createNumpyDataProcessor",
     "input": {
-      "data": [],
+      "config": [],
+      "data": ["RAW_TRAIN_DATA", "RAW_TEST_DATA"],
       "tags": []
     },
     "output": {
-      "data": [],
+      "data": ["NUMPY_TRAIN_DATA", "NUMPY_VAL_DATA", "NUMPY_TEST_DATA"],
       "tags": []
     }
   }

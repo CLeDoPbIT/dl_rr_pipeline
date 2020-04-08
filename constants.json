@@ -1,0 +1,9 @@
+[
+  {
+    "RAW_TRAIN_DATA": "first_level/data/raw/train/",
+    "RAW_TEST_DATA": "first_level/data/raw/test/",
+    "NUMPY_TRAIN_DATA": "first_level/data/numpy/train/",
+    "NUMPY_VAL_DATA": "first_level/data/numpy/val/",
+    "NUMPY_TEST_DATA": "first_level/data/numpy/test/"
+  }
+]
