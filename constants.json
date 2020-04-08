@@ -4,5 +4,6 @@
     "NUMPY_TRAIN_DATA": "./first_level/data/numpy/train/train.npz",
     "NUMPY_VAL_DATA": "./first_level/data/numpy/val/val.npz",
     "NUMPY_TEST_DATA": "./first_level/data/numpy/test/test.npz",
+    "CREATE_NUMPY_DATA_PROCESSOR_CONFIG": "./preprocessing/createNumpyData/createNumpyDataConfig.json",
     "TEST_CONFIG": "./test_config.json"
 }

@@ -1,11 +1,11 @@
 [
   {
     "name": "Create Numpy Data Processor",
-    "module": "preprocessing.createNumpyDataProcessor",
+    "module": "preprocessing.createNumpyData.createNumpyDataProcessor",
     "forceCreate": "True",
     "input":
     {
-      "config": ["TEST_CONFIG"],
+      "config": ["CREATE_NUMPY_DATA_PROCESSOR_CONFIG"],
       "data": ["RAW_TRAIN_DATA", "RAW_TEST_DATA"]
     },
     "output":
