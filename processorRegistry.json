@@ -24,8 +24,23 @@
     },
     "output":
     {
-      "data": ["BEST_SNAPSHOT"]
+      "data": ["BEST_SNAPSHOT_FC"]
+    }
+  },
+  {
+    "name": "Test Fully Connected Network",
+    "module": "test",
+    "forceCreate": "True",
+    "input":
+    {
+      "config": ["FC_NET_CONFIG"],
+      "data": ["NUMPY_TEST_DATA", "BEST_SNAPSHOT_FC"]
+    },
+    "output":
+    {
+      "data": ["FC_RESULTS"]
     }
   }
+
 
 ]

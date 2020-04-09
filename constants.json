@@ -6,6 +6,7 @@
     "NUMPY_TEST_DATA": "./data/first_level/numpy/test/test.npz",
     "CREATE_NUMPY_DATA_PROCESSOR_CONFIG": "./preprocessing/createNumpyData/createNumpyDataConfig.json",
     "TEST_CONFIG": "./test_config.json",
-    "BEST_SNAPSHOT": "./snapshots/first_level/best_snapshot_0.pth",
-    "FC_NET_CONFIG": "./models/first_level/configs/FcNet_config.json"
+    "BEST_SNAPSHOT_FC": "./snapshots/first_level/BEST_SNAPSHOT_FC_0.pth",
+    "FC_NET_CONFIG": "./models/first_level/configs/FcNet_config.json",
+    "FC_RESULTS": "./results/fc_result.npy"
 }
