@@ -20,10 +20,6 @@ class FcNet(nn.Module):
         self.maxpool = nn.MaxPool1d(kernel_size=3)
         self.softmax = nn.LogSoftmax(dim=1)
 
-    def init_weights(self):
-        self.linear.weight.data.uniform_(-0.1, 0.1)
-        self.linear.bias.data.fill_(0)
-
     def forward(self, batch_input):
         # print(batch_input[:, -1, :].shape)
         # print(batch_input.shape)

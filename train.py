@@ -67,7 +67,7 @@ def __validation(model, data_loader, metric, criterion, device):
 
 
 def __init_model(network_config):
-    model = getattr(models, network_config['arch'])(network_config['input_size'],network_config['number_classes'])
+    model = getattr(models, network_config['arch'])(network_config['input_size'][-1],network_config['number_classes'])
 
     if bool(network_config["train_on_gpu"]):
         if torch.cuda.is_available():
@@ -95,7 +95,7 @@ def __init_parameters_network(model, network_config):
 
 
 def __create_network_graph(model, writer, config, device):
-    dummy = torch.rand(1, config['input_size'])
+    dummy = torch.rand(config['input_size'])
     dummy = dummy.to(device)
     writer.add_graph(model, input_to_model=dummy)
 
@@ -107,11 +107,12 @@ def __add_current_stat_to_tb(accuracy, loss, writer, phase, epoch):
 
 def process(input_data, input_config, output_data_types):
     date = create_current_date()
-    writer = SummaryWriter(os.path.join(input_data["TENSORBOARD_EXPS"], date))
+    input_keys = list(input_data.keys())
+    writer = SummaryWriter(os.path.join(input_data[input_keys[2]], date))
 
-    x_train, y_train = read_data(input_data["NUMPY_TRAIN_DATA"], "x_train", "y_train")
-    x_val, y_val = read_data(input_data["NUMPY_VAL_DATA"], "x_val", "y_val")
-    network_config = read_json(input_config["FC_NET_CONFIG"])
+    x_train, y_train = read_data(input_data[input_keys[0]], "x_train", "y_train")
+    x_val, y_val = read_data(input_data[input_keys[1]], "x_val", "y_val")
+    network_config = read_json(input_config[list(input_config.keys())[0]])
     network_config = str_to_bool(network_config)
     model, device = __init_model(network_config)
     criterion, metric, optimizer, lr_scheduler = __init_parameters_network(model, network_config)
@@ -138,8 +139,8 @@ def process(input_data, input_config, output_data_types):
 
         if best_loss > val_loss:
             best_loss = val_loss
-            save_weights(model, output_data_types["BEST_SNAPSHOT_FC"], parallel=network_config["parallel"])
-            save_weights(model, os.path.join(input_data["TENSORBOARD_EXPS"], date, output_data_types["BEST_SNAPSHOT_FC"].split("/")[-1]), parallel=network_config["parallel"])
+            save_weights(model, output_data_types[list(output_data_types.keys())[0]], parallel=network_config["parallel"])
+            save_weights(model, os.path.join(input_data[input_keys[2]], date, output_data_types[list(output_data_types.keys())[0]].split("/")[-1]), parallel=network_config["parallel"])
 
         else:
             epochs_with_no_progress += 1
