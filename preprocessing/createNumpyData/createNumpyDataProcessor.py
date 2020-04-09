@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 from sklearn.model_selection import train_test_split
-from utils.mainUtils import read_json
+from utils.misc import read_json
 
 
 def process(input_data, input_config, output_data_types):
@@ -10,8 +10,8 @@ def process(input_data, input_config, output_data_types):
     raw_test_data_path = input_data["RAW_TRAIN_DATA"]
     raw_train_data_path = input_data["RAW_TEST_DATA"]
     numpy_train_output_path = output_data_types["NUMPY_TRAIN_DATA"]
-    numpy_val_output_path = output_data_types["NUMPY_TEST_DATA"]
-    numpy_test_output_path = output_data_types["NUMPY_VAL_DATA"]
+    numpy_val_output_path = output_data_types["NUMPY_VAL_DATA"]
+    numpy_test_output_path = output_data_types["NUMPY_TEST_DATA"]
 
     config = read_json(input_config["CREATE_NUMPY_DATA_PROCESSOR_CONFIG"])
 
@@ -32,8 +32,8 @@ def __create_train_val(x_data, y_data, config):
 def __create_train_val_numpy_files(raw_data_path, numpy_train_output_path, numpy_val_output_path, config):
     x_data, y_data = __create_one_df(raw_data_path)
     x_train, y_train, x_val, y_val = __create_train_val(x_data, y_data, config)
-    np.savez(numpy_train_output_path, x_test=x_train, y_test=y_train)
-    np.savez(numpy_val_output_path, x_test=x_val, y_test=y_val)
+    np.savez(numpy_train_output_path, x_train=x_train, y_train=y_train)
+    np.savez(numpy_val_output_path, x_val=x_val, y_val=y_val)
 
 
 def __create_test_numpy_files(raw_data_path, numpy_test_output_path):

@@ -2,7 +2,7 @@
   {
     "name": "Create Numpy Data Processor",
     "module": "preprocessing.createNumpyData.createNumpyDataProcessor",
-    "forceCreate": "True",
+    "forceCreate": "False",
     "input":
     {
       "config": ["CREATE_NUMPY_DATA_PROCESSOR_CONFIG"],
@@ -12,5 +12,20 @@
     {
       "data": ["NUMPY_TRAIN_DATA", "NUMPY_VAL_DATA", "NUMPY_TEST_DATA"]
     }
+  },
+    {
+    "name": "Train Fully Connected Network",
+    "module": "train",
+    "forceCreate": "True",
+    "input":
+    {
+      "config": ["FC_NET_CONFIG"],
+      "data": ["NUMPY_TRAIN_DATA", "NUMPY_VAL_DATA"]
+    },
+    "output":
+    {
+      "data": ["BEST_SNAPSHOT"]
+    }
   }
+
 ]

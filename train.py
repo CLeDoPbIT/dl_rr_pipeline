@@ -1,0 +1,145 @@
+import numpy as np
+import torch
+import torch.nn
+
+import models
+import losses
+import metrics
+import  datasets
+from utils.misc import read_json, str_to_bool, save_weights
+from torch import optim
+
+
+def __train(model, data_loader, metric, criterion, optimizer, device):
+    model.train()
+
+    epoch_labels = list()
+    epoch_preds = list()
+    epoch_loss = 0
+    for inputs, labels in data_loader:
+
+        inputs = inputs.to(device, non_blocking=True)
+        inputs = inputs.float()
+        labels = labels.to(device, non_blocking=True, dtype=torch.long)
+
+        output = model(inputs)
+        _, preds = torch.max(output, 1)
+
+        loss = criterion(output, labels)
+        loss.backward()
+
+        optimizer.step()
+        optimizer.zero_grad()
+
+        epoch_labels = np.concatenate((epoch_labels, labels.cpu().numpy()), axis = 0)
+        epoch_preds = np.concatenate((epoch_preds, preds.cpu().numpy()), axis = 0)
+        epoch_loss += loss.item() * inputs.size(0)
+
+    score = metric(epoch_preds, epoch_labels)
+    return score, epoch_loss
+
+
+def __validation(model, data_loader, metric, criterion, device):
+
+    model.eval()
+    epoch_labels = list()
+    epoch_preds = list()
+    epoch_loss = 0
+    for inputs, labels in data_loader:
+
+        inputs = inputs.to(device, non_blocking=True)
+        inputs = inputs.float()
+        labels = labels.to(device, non_blocking=True, dtype=torch.long)
+
+        output = model(inputs)
+        _, preds = torch.max(output, 1)
+
+        loss = criterion(output, labels)
+
+        epoch_labels = np.concatenate((epoch_labels, labels.cpu().numpy()), axis=0)
+        epoch_preds = np.concatenate((epoch_preds, preds.cpu().numpy()), axis=0)
+        epoch_loss += loss.item() * inputs.size(0)
+
+    score = metric(epoch_preds, epoch_labels)
+
+    return score, epoch_loss
+
+
+def __read_data(data_path, x_name, y_name):
+    data = np.load(data_path)
+    return data[x_name], data[y_name]
+
+
+def __init_model(network_config):
+    model = getattr(models, network_config['arch'])(network_config['input_size'],network_config['number_classes'])
+
+    if bool(network_config["train_on_gpu"]):
+        if torch.cuda.is_available():
+            device = torch.device("cuda:0")
+        else:
+            raise KeyError("Try to create model on GPU, but GPU is not available")
+    else:
+        device = ("cpu")
+
+    model = model.to(device)
+
+    if torch.cuda.is_available() and network_config["parallel"]:
+        model = torch.nn.DataParallel(model)
+    # model = model.double()
+    return model, device
+
+
+def __init_parameters_network(model, network_config):
+    criterion = getattr(losses, network_config['loss'])()
+    metric = getattr(metrics, network_config['metrics'])()
+    optimizer = getattr(optim, network_config['optimizer'])(model.parameters(),
+                                                            lr=network_config['learning_rate'])
+    lr_scheduler = getattr(optim.lr_scheduler, network_config['lr_scheduler'])(optimizer)
+    return criterion, metric, optimizer, lr_scheduler
+
+
+def process(input_data, input_config, output_data_types):
+
+    x_train, y_train = __read_data(input_data["NUMPY_TRAIN_DATA"], "x_train", "y_train")
+    x_val, y_val = __read_data(input_data["NUMPY_VAL_DATA"], "x_val", "y_val")
+    network_config = read_json(input_config["FC_NET_CONFIG"])
+    network_config = str_to_bool(network_config)
+    model, device = __init_model(network_config)
+    criterion, metric, optimizer, lr_scheduler = __init_parameters_network(model, network_config)
+    dataloader_train = datasets.create_dataloader(network_config, getattr(datasets, network_config["dataset"]), x_train, y_train)
+    dataloader_val = datasets.create_dataloader(network_config, getattr(datasets, network_config["dataset"]), x_val, y_val)
+    
+    best_loss = np.inf
+    best_score = 0
+    start_epoch = 0
+    
+    #todo: create tensorboard
+
+    for epoch in range(start_epoch, network_config["epochs"]):
+        train_score, train_loss = __train(model, dataloader_train, metric, criterion, optimizer, device)
+        val_score, val_loss = __validation(model, dataloader_val, metric, criterion, device)
+
+        print(epoch)
+        print("train", train_score, train_loss)
+        print("val", val_score, val_loss)
+        print("-"*50)
+
+        lr_scheduler.step(epoch)
+
+        # # todo: replace save_weights
+        # if ((epoch + 1) % network_config['save_freq']) == 0:
+        #     save_weights(model, network_config['prefix'], network_config['model']['name'], (epoch + 1), network_config['parallel'])
+        # if best_loss > loss:
+        #     best_loss = loss
+        #     best_epoch = epoch + 1
+        #     if best_score < score:
+        #         best_score = score
+        #     save_weights(model, network_config['prefix'], network_config['model']['name'], 'best_loss-' + str(best_epoch),
+        #                  network_config['parallel'])
+        # elif best_score < score:
+        #     best_score = score
+        #     best_epoch = epoch + 1
+        #     save_weights(model, network_config['prefix'], network_config['model']['name'], 'best_score-' + str(best_epoch),
+        #                  network_config['parallel'])
+
+    pass

@@ -17,14 +17,15 @@ import importlib
 import traceback
 import time
 import utils.mainUtils as mainUtils
+import utils.misc
 
 PROCESSOR_REGISTRY_CONFIG = "./processorRegistry.json"
 CONSTANS = "./constants.json"
 
 
 def run(processor_registry_config_path, constants_path):
-    constants_config = mainUtils.read_json(constants_path)
-    processor_registry_config = mainUtils.read_json(processor_registry_config_path)
+    constants_config = utils.misc.read_json(constants_path)
+    processor_registry_config = utils.misc.read_json(processor_registry_config_path)
 
     for processor in processor_registry_config:
         processor_data_types = mainUtils.get_processor_data(processor["input"]["data"], constants_config)
@@ -33,7 +34,7 @@ def run(processor_registry_config_path, constants_path):
 
         is_output_existed = mainUtils.is_processor_output_created(processor_output_data_types)
 
-        if bool(processor["forceCreate"]) and is_output_existed:
+        if processor["forceCreate"]=="False" and is_output_existed:
             print(f"INFO: For {processor['name']} output is existed")
             continue
 

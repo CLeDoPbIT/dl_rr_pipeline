@@ -1,0 +1,20 @@
+{
+    "learning_rate": 0.1,
+    "parallel": "False",
+    "save_freq": 1,
+    "loss": "ce",
+    "metrics": "accuracy",
+    "weight_decay": 0.0001,
+    "optimizer": "Adam",
+    "lr_scheduler": "ReduceLROnPlateau",
+    "arch": "FcNet",
+    "num_workers": 10,
+    "epochs": 200,
+    "number_classes": 2,
+    "batch_size": 5000,
+    "dataset": "DummyDataset",
+    "train_on_gpu": "True",
+    "input_size": 100,
+    "shuffle": "True",
+    "pin_memory": "True"
+}

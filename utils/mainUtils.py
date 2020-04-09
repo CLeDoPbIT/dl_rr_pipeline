@@ -1,12 +1,4 @@
-import json
 import os
-
-
-def read_json(filepath):
-    config_file = open(filepath, 'r')
-    config_json = json.load(config_file)
-    config_file.close()
-    return config_json
 
 
 def get_processor_data(data_list, constants_config):

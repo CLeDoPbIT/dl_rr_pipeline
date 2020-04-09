@@ -1,9 +1,11 @@
 {
-    "RAW_TRAIN_DATA": "./first_level/data/raw/train/",
-    "RAW_TEST_DATA": "./first_level/data/raw/test/",
-    "NUMPY_TRAIN_DATA": "./first_level/data/numpy/train/train.npz",
-    "NUMPY_VAL_DATA": "./first_level/data/numpy/val/val.npz",
-    "NUMPY_TEST_DATA": "./first_level/data/numpy/test/test.npz",
+    "RAW_TRAIN_DATA": "./data/first_level/raw/train/",
+    "RAW_TEST_DATA": "./data/first_level/raw/test/",
+    "NUMPY_TRAIN_DATA": "./data/first_level/numpy/train/train.npz",
+    "NUMPY_VAL_DATA": "./data/first_level/numpy/val/val.npz",
+    "NUMPY_TEST_DATA": "./data/first_level/numpy/test/test.npz",
     "CREATE_NUMPY_DATA_PROCESSOR_CONFIG": "./preprocessing/createNumpyData/createNumpyDataConfig.json",
-    "TEST_CONFIG": "./test_config.json"
+    "TEST_CONFIG": "./test_config.json",
+    "BEST_SNAPSHOT": "./snapshots/first_level/best_snapshot_0.pth",
+    "FC_NET_CONFIG": "./models/first_level/configs/FcNet_config.json"
 }
