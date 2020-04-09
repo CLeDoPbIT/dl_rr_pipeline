@@ -1,18 +1,3 @@
-# todo: 1) Refactoring names following PEP8
-# todo: 2) Create processorRegistry format
-# todo: 3) Create total pipeline
-# todo: 4) Create first level models
-# todo: 5) Create first level datasets
-# todo: 6) Create first level train val test loops
-# todo: 7) Create second level models
-# todo: 8) Create second level datasets
-# todo: 9) Create second level train val test loops
-# todo: 10) Create tensorboard
-# todo: 11) Create logging
-# todo: 12) Create UNIT tests
-# todo: 13) Create README
-# todo: 14) Create docstrings
-
 import importlib
 import traceback
 import time
@@ -24,16 +9,30 @@ CONSTANS = "./constants.json"
 
 
 def run(processor_registry_config_path, constants_path):
+    """
+    Main manager of processors. Run all processors from processorRegistry.json consistently
+
+    Args:
+        processor_registry_config_path: path processorRegistry.json
+        constants_path: path constants.json
+
+    """
+
+    # read configs
     constants_config = utils.misc.read_json(constants_path)
     processor_registry_config = utils.misc.read_json(processor_registry_config_path)
 
+    # main processors loop
     for processor in processor_registry_config:
+
+        # get processors data
         processor_data_types = mainUtils.get_processor_data(processor["input"]["data"], constants_config)
         processor_output_data_types = mainUtils.get_processor_data(processor["output"]["data"], constants_config)
         processor_input_config = mainUtils.get_processor_data(processor["input"]["config"], constants_config)
 
         is_output_existed = mainUtils.is_processor_output_created(processor_output_data_types)
 
+        # check on force run processor even data is existed. If data is existed then also skip processor
         if processor["forceCreate"]=="False" and is_output_existed:
             print(f"INFO: For {processor['name']} output is existed")
             continue

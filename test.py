@@ -10,6 +10,19 @@ from torch import optim
 
 
 def __test(model, data_loader, metric, device):
+    """
+    Function of test result
+
+    Args:
+        model: model for test
+        data_loader: data loader for model
+        metric: class for score result
+        device: gpu or cpu
+
+    Returns:
+        score: score of model
+
+    """
 
     model.eval()
     epoch_labels = list()
@@ -32,6 +45,18 @@ def __test(model, data_loader, metric, device):
 
 
 def __init_model(network_config, best_snapshot):
+    """
+    Init model for training with respect to config
+
+    Args:
+        network_config: config of network and train process
+        best_snapshot: best snapshot for testins
+
+    Returns:
+        model, device: model for training, gpu or cpu
+
+    """
+
     model = getattr(models, network_config['arch'])(network_config['input_size'],network_config['number_classes'])
 
     if bool(network_config["train_on_gpu"]):
@@ -53,18 +78,39 @@ def __init_model(network_config, best_snapshot):
     return model, device
 
 
-def __init_parameters_network(model, network_config):
+def __init_parameters_network(network_config):
+    """
+    Init parameters score metric
+
+    Args:
+        network_config: config of network and train process
+
+    Returns:
+        criterion, metric, optimizer, lr_scheduler: loss function, score metric, optimizer, learning rate scheduler
+
+    """
+
     metric = getattr(metrics, network_config['metrics'])()
     return metric
 
 
 def process(input_data, input_config, output_data_types):
-    x_test, y_test = read_data(input_data["NUMPY_TEST_DATA"], "x_test", "y_test")
-    network_config = read_json(input_config["FC_NET_CONFIG"])
+    """
+    Main process of test model
+
+    Args:
+        input_data: input data for training
+            input_data[0]: test data
+            input_data[2]: best snapshot path
+        input_config: config of network
+    """
+
+    x_test, y_test = read_data(input_data[list(input_data.keys())[0]], "x_test", "y_test")
+    network_config = read_json(input_config[list(input_config.keys())[0]])
     network_config = str_to_bool(network_config)
 
-    model, device = __init_model(network_config, input_data["BEST_SNAPSHOT_FC"])
-    metric = __init_parameters_network(model, network_config)
+    model, device = __init_model(network_config, input_data[list(input_data.keys())[1]])
+    metric = __init_parameters_network(network_config)
     dataloader_test = datasets.create_dataloader(network_config, getattr(datasets, network_config["dataset"]),
                                                  x_test, y_test)
     val_score = __test(model, dataloader_test, metric, device)
