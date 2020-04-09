@@ -57,7 +57,7 @@ def __init_model(network_config, best_snapshot):
 
     """
 
-    model = getattr(models, network_config['arch'])(network_config['input_size'],network_config['number_classes'])
+    model = getattr(models, network_config['arch'])(network_config['input_size'][-1],network_config['number_classes'])
 
     if bool(network_config["train_on_gpu"]):
         if torch.cuda.is_available():
