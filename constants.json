@@ -6,8 +6,15 @@
     "NUMPY_TEST_DATA": "./data/first_level/numpy/test/test.npz",
     "CREATE_NUMPY_DATA_PROCESSOR_CONFIG": "./preprocessing/createNumpyData/createNumpyDataConfig.json",
     "TEST_CONFIG": "./test_config.json",
-    "BEST_SNAPSHOT_FC": "./snapshots/first_level/BEST_SNAPSHOT_FC_0.pth",
+    "BEST_SNAPSHOT_FC": "./snapshots/first_level/best_snapshot_fc_0.pth",
     "FC_NET_CONFIG": "./models/first_level/configs/FcNet_config.json",
     "FC_RESULTS": "./results/fc_result.npy",
-    "TENSORBOARD_EXPS": "./tensorboard_exps/"
+    "TENSORBOARD_EXPS": "./tensorboard_exps/",
+    "RESNET_NUMPY_TRAIN_DATA": "./data/first_level/numpy/train/train_resnet.npz",
+    "RESNET_NUMPY_VAL_DATA": "./data/first_level/numpy/val/val_resnet.npz",
+    "RESNET_NUMPY_TEST_DATA": "./data/first_level/numpy/test/test_resnet.npz",
+    "CREATE_NUMPY_DATA_FOR_RESNET_PROCESSOR_CONFIG": "./preprocessing/createNumpyDataForResNet/createNumpyDataForResNetConfig.json",
+    "RESNET_CONFIG": "./models/first_level/configs/ResNet_config.json",
+    "BEST_SNAPSHOT_RESNET": "./snapshots/first_level/best_snapshot_resnet_0.pth",
+    "RESNET_RESULTS": "./results/resnet_result.npy"
 }

@@ -1,4 +1,60 @@
 [
+  {
+    "name": "Create Numpy Data Processor",
+    "module": "preprocessing.createNumpyData.createNumpyDataProcessor",
+    "forceCreate": "True",
+    "input":
+    {
+      "config": ["CREATE_NUMPY_DATA_PROCESSOR_CONFIG"],
+      "data": ["RAW_TRAIN_DATA", "RAW_TEST_DATA"]
+    },
+    "output":
+    {
+      "data": ["NUMPY_TRAIN_DATA", "NUMPY_VAL_DATA", "NUMPY_TEST_DATA", "RESNET_NUMPY_TRAIN_DATA", "RESNET_NUMPY_VAL_DATA", "RESNET_NUMPY_TEST_DATA"]
+    }
+  },
+  {
+    "name": "Train Fully Connected Network",
+    "module": "train",
+    "forceCreate": "True",
+    "input":
+    {
+      "config": ["FC_NET_CONFIG"],
+      "data": ["NUMPY_TRAIN_DATA", "NUMPY_VAL_DATA", "TENSORBOARD_EXPS"]
+    },
+    "output":
+    {
+      "data": ["BEST_SNAPSHOT_FC"]
+    }
+  },
+  {
+    "name": "Test Fully Connected Network",
+    "module": "test",
+    "forceCreate": "True",
+    "input":
+    {
+      "config": ["FC_NET_CONFIG"],
+      "data": ["NUMPY_TEST_DATA", "BEST_SNAPSHOT_FC"]
+    },
+    "output":
+    {
+      "data": ["FC_RESULTS"]
+    }
+  },
+  {
+    "name": "Train ResNet Network",
+    "module": "train",
+    "forceCreate": "True",
+    "input":
+    {
+      "config": ["RESNET_CONFIG"],
+      "data": ["RESNET_NUMPY_TRAIN_DATA", "RESNET_NUMPY_VAL_DATA", "TENSORBOARD_EXPS"]
+    },
+    "output":
+    {
+      "data": ["BEST_SNAPSHOT_RESNET"]
+    }
+  },
     {
     "name": "Test ResNet Network",
     "module": "test",
