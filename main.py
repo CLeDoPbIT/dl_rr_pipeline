@@ -31,7 +31,10 @@ def run(processor_registry_config_path, constants_path):
         processor_output_data_types = mainUtils.get_processor_data(processor["output"]["data"], constants_config)
         processor_input_config = mainUtils.get_processor_data(processor["input"]["config"], constants_config)
 
-        if bool(processor["forceCreate"]) is False and mainUtils.is_processor_output_created(processor_output_data_types):
+        is_output_existed = mainUtils.is_processor_output_created(processor_output_data_types)
+
+        if bool(processor["forceCreate"]) and is_output_existed:
+            print(f"INFO: For {processor['name']} output is existed")
             continue
 
         timestamp = time.time()

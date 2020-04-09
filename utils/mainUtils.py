@@ -21,8 +21,12 @@ def get_processor_data(data_list, constants_config):
 
 def is_processor_output_created(processor_output_data_types):
     for data_type in processor_output_data_types:
-        if not len(os.listdir(processor_output_data_types[data_type]))==0:
-            return True
+        if os.path.isdir(processor_output_data_types[data_type]):
+            if not len(os.listdir(processor_output_data_types[data_type]))==0:
+                return True
+        else:
+            if os.path.exists(processor_output_data_types[data_type]):
+                return True
     return False
 
 
