@@ -5,7 +5,6 @@ def ce(reduction='mean'):
     return CrossEntropyLoss(reduction=reduction)
 
 
-
 def bce(reduction='mean'):
     return BCELoss(reduction=reduction)
 

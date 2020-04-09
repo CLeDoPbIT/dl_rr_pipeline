@@ -21,8 +21,6 @@ class FcNet(nn.Module):
         self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, batch_input):
-        # print(batch_input[:, -1, :].shape)
-        # print(batch_input.shape)
         out = self.batch_norm(batch_input)
         out = self.fc_0(out)
         out = F.relu(self.batch_norm_2(out))

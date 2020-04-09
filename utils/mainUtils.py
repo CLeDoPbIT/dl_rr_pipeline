@@ -20,20 +20,3 @@ def is_processor_output_created(processor_output_data_types):
             if os.path.exists(processor_output_data_types[data_type]):
                 return True
     return False
-
-
-def get_processor_output():
-    pass
-
-
-def get_process_input():
-    pass
-
-
-def get_process_data():
-    pass
-
-
-def get_process_tags():
-    pass
-
