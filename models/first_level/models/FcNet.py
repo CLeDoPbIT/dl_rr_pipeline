@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class FcNet(nn.Module):
@@ -28,22 +29,17 @@ class FcNet(nn.Module):
         # print(batch_input.shape)
         out = self.batch_norm(batch_input)
         out = self.fc_0(out)
-        out = self.batch_norm_2(out)
-        out = self.relu(out)
+        out = F.relu(self.batch_norm_2(out))
         out = self.dropout_1(out)
 
         out = self.fc_1(out)
-        out = self.batch_norm_3(out)
-        out = self.relu(out)
+        out = F.relu(self.batch_norm_3(out))
         out = self.dropout_2(out)
 
         out = self.fc_2(out)
-        out = self.batch_norm_4(out)
-        out = self.relu(out)
+        out = F.relu(self.batch_norm_4(out))
         out = self.dropout_3(out)
 
-        # print(out.shape)
         out = self.fc_3(out)
-        # out = self.batch_norm_3(out)
         out = self.softmax(out)
         return out

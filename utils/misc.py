@@ -1,7 +1,21 @@
 import json
-
+import pytz
+from datetime import datetime
 import numpy as np
 import torch
+
+
+def create_current_date():
+    utc_now = pytz.utc.localize(datetime.utcnow())
+    pst_now = utc_now.astimezone(pytz.timezone("Europe/Moscow"))
+    now = datetime.now(tz=pst_now.tzinfo)
+    date = str(now)[:19]
+    list_date = list(date)
+    list_date[10] = '_'
+    [list_date.remove("-") for i in range(2)]
+    [list_date.remove(":") for i in range(2)]
+    date = ''.join(list_date)
+    return date
 
 
 def load_weights(model, file, parallel):

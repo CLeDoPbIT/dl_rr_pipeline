@@ -4,8 +4,10 @@ import torch.nn
 import models
 import losses
 import metrics
-import  datasets
-from utils.misc import read_json, str_to_bool, save_weights, read_data
+import datasets
+import os
+from utils.misc import read_json, str_to_bool, save_weights, read_data, create_current_date
+from torch.utils.tensorboard import SummaryWriter
 from torch import optim
 
 
@@ -92,7 +94,20 @@ def __init_parameters_network(model, network_config):
     return criterion, metric, optimizer, lr_scheduler
 
 
+def __create_network_graph(model, writer, config, device):
+    dummy = torch.rand(1, config['input_size'])
+    dummy = dummy.to(device)
+    writer.add_graph(model, input_to_model=dummy)
+
+
+def __add_current_stat_to_tb(accuracy, loss, writer, phase, epoch):
+    writer.add_scalar(phase + "_accuracy",accuracy, global_step=epoch)
+    writer.add_scalar(phase + "_loss",loss, global_step=epoch)
+
+
 def process(input_data, input_config, output_data_types):
+    date = create_current_date()
+    writer = SummaryWriter(os.path.join(input_data["TENSORBOARD_EXPS"], date))
 
     x_train, y_train = read_data(input_data["NUMPY_TRAIN_DATA"], "x_train", "y_train")
     x_val, y_val = read_data(input_data["NUMPY_VAL_DATA"], "x_val", "y_val")
@@ -102,15 +117,19 @@ def process(input_data, input_config, output_data_types):
     criterion, metric, optimizer, lr_scheduler = __init_parameters_network(model, network_config)
     dataloader_train = datasets.create_dataloader(network_config, getattr(datasets, network_config["dataset"]), x_train, y_train)
     dataloader_val = datasets.create_dataloader(network_config, getattr(datasets, network_config["dataset"]), x_val, y_val)
-    
+
+    __create_network_graph(model, writer, network_config, device)
+
     best_loss = np.inf
     start_epoch = 0
     epochs_with_no_progress = 0
-    #todo: create tensorboard
 
     for epoch in range(start_epoch, network_config["epochs"]):
         train_score, train_loss = __train(model, dataloader_train, metric, criterion, optimizer, device)
         val_score, val_loss = __validation(model, dataloader_val, metric, criterion, device)
+
+        __add_current_stat_to_tb(train_score, train_loss, writer, "train", epoch)
+        __add_current_stat_to_tb(val_score, val_loss, writer, "val", epoch)
 
         print(f"INFO: Train {network_config['arch']:15}, epoch = {epoch:3}: Accuracy = {train_score:8}, Loss = {train_loss:8}")
         print(f"INFO: Val   {network_config['arch']:15}, epoch = {epoch:3}: Accuracy = {val_score:8}, Loss = {val_loss:8}")
@@ -120,9 +139,10 @@ def process(input_data, input_config, output_data_types):
         if best_loss > val_loss:
             best_loss = val_loss
             save_weights(model, output_data_types["BEST_SNAPSHOT_FC"], parallel=network_config["parallel"])
+            save_weights(model, os.path.join(input_data["TENSORBOARD_EXPS"], date, output_data_types["BEST_SNAPSHOT_FC"].split("/")[-1]), parallel=network_config["parallel"])
+
         else:
             epochs_with_no_progress += 1
             if epochs_with_no_progress >= network_config["max_epochs_without_progress"]:
                 break
-
-    pass
+    writer.close()

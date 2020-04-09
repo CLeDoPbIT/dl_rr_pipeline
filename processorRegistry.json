@@ -20,7 +20,7 @@
     "input":
     {
       "config": ["FC_NET_CONFIG"],
-      "data": ["NUMPY_TRAIN_DATA", "NUMPY_VAL_DATA"]
+      "data": ["NUMPY_TRAIN_DATA", "NUMPY_VAL_DATA", "TENSORBOARD_EXPS"]
     },
     "output":
     {

@@ -8,5 +8,6 @@
     "TEST_CONFIG": "./test_config.json",
     "BEST_SNAPSHOT_FC": "./snapshots/first_level/BEST_SNAPSHOT_FC_0.pth",
     "FC_NET_CONFIG": "./models/first_level/configs/FcNet_config.json",
-    "FC_RESULTS": "./results/fc_result.npy"
+    "FC_RESULTS": "./results/fc_result.npy",
+    "TENSORBOARD_EXPS": "./tensorboard_exps/"
 }
