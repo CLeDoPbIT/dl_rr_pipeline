@@ -1,12 +1,11 @@
 import numpy as np
 import torch
 import torch.nn
-
 import models
 import losses
 import metrics
 import  datasets
-from utils.misc import read_json, str_to_bool, save_weights
+from utils.misc import read_json, str_to_bool, save_weights, read_data
 from torch import optim
 
 
@@ -65,11 +64,6 @@ def __validation(model, data_loader, metric, criterion, device):
     return score, epoch_loss
 
 
-def __read_data(data_path, x_name, y_name):
-    data = np.load(data_path)
-    return data[x_name], data[y_name]
-
-
 def __init_model(network_config):
     model = getattr(models, network_config['arch'])(network_config['input_size'],network_config['number_classes'])
 
@@ -100,8 +94,8 @@ def __init_parameters_network(model, network_config):
 
 def process(input_data, input_config, output_data_types):
 
-    x_train, y_train = __read_data(input_data["NUMPY_TRAIN_DATA"], "x_train", "y_train")
-    x_val, y_val = __read_data(input_data["NUMPY_VAL_DATA"], "x_val", "y_val")
+    x_train, y_train = read_data(input_data["NUMPY_TRAIN_DATA"], "x_train", "y_train")
+    x_val, y_val = read_data(input_data["NUMPY_VAL_DATA"], "x_val", "y_val")
     network_config = read_json(input_config["FC_NET_CONFIG"])
     network_config = str_to_bool(network_config)
     model, device = __init_model(network_config)
@@ -110,36 +104,25 @@ def process(input_data, input_config, output_data_types):
     dataloader_val = datasets.create_dataloader(network_config, getattr(datasets, network_config["dataset"]), x_val, y_val)
     
     best_loss = np.inf
-    best_score = 0
     start_epoch = 0
-    
+    epochs_with_no_progress = 0
     #todo: create tensorboard
 
     for epoch in range(start_epoch, network_config["epochs"]):
         train_score, train_loss = __train(model, dataloader_train, metric, criterion, optimizer, device)
         val_score, val_loss = __validation(model, dataloader_val, metric, criterion, device)
 
-        print(epoch)
-        print("train", train_score, train_loss)
-        print("val", val_score, val_loss)
-        print("-"*50)
+        print(f"INFO: Train {network_config['arch']:15}, epoch = {epoch:3}: Accuracy = {train_score:8}, Loss = {train_loss:8}")
+        print(f"INFO: Val   {network_config['arch']:15}, epoch = {epoch:3}: Accuracy = {val_score:8}, Loss = {val_loss:8}")
 
         lr_scheduler.step(epoch)
 
-        # # todo: replace save_weights
-        # if ((epoch + 1) % network_config['save_freq']) == 0:
-        #     save_weights(model, network_config['prefix'], network_config['model']['name'], (epoch + 1), network_config['parallel'])
-        # if best_loss > loss:
-        #     best_loss = loss
-        #     best_epoch = epoch + 1
-        #     if best_score < score:
-        #         best_score = score
-        #     save_weights(model, network_config['prefix'], network_config['model']['name'], 'best_loss-' + str(best_epoch),
-        #                  network_config['parallel'])
-        # elif best_score < score:
-        #     best_score = score
-        #     best_epoch = epoch + 1
-        #     save_weights(model, network_config['prefix'], network_config['model']['name'], 'best_score-' + str(best_epoch),
-        #                  network_config['parallel'])
+        if best_loss > val_loss:
+            best_loss = val_loss
+            save_weights(model, output_data_types["BEST_SNAPSHOT_FC"], parallel=network_config["parallel"])
+        else:
+            epochs_with_no_progress += 1
+            if epochs_with_no_progress >= network_config["max_epochs_without_progress"]:
+                break
 
     pass
