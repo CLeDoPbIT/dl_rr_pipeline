@@ -5,7 +5,7 @@ pytz==2019.3
 scikit-learn==0.22.2.post1
 scikit-posthocs==0.6.2
 tensorboard==2.1.0
-tensorflow==2.1.0
+tensorflow==2.5.0
 tensorflow-estimator==2.1.0
 torch==1.4.0
 torchvision==0.5.0
